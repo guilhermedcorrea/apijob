@@ -1,53 +1,97 @@
 """Classes Schemmas- Serializa Informações vindas das databases"""
 
-from marshmallow import Schema, fields as ma_fields
-
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
+from ..models.models import Produtos, LogUsuario,CotacaoFrete, MarcaProduto
 
 #Schema/Produtos
-class ProdutosSchema(Schema):
-    id = ma_fields.Integer()
-    user_id = ma_fields.Integer()
-    nomeproduto = ma_fields.String()
-    eanproduto = ma_fields.String()
-    categoriaproduto = ma_fields.String()
-    idmarca = ma_fields.Integer()
-    sku = ma_fields.String()
+class ProdutosSchema(SQLAlchemyAutoSchema):
+    """
+    Serializa e desserializa 
+    """
+    class Meta:
+        model = Produtos
+        include_relationships = True
+        load_instance = True
+        idproduto = auto_field()
+        skuproduto = auto_field()
+        idmarca = auto_field()
+        nomeproduto = auto_field()
+        idmarca = auto_field()
+        urlpaginaproduto = auto_field()
+        peso = auto_field()
+        altura = auto_field()
+        largura = auto_field()
+        bitativo = auto_field()
+        dataalterado = auto_field()
+
 
 #Schema/Fretes
-class FretesSchema(Schema):
-    idfrete = ma_fields
-    cep = ma_fields
-    valorFrete = ma_fields
-    prazo = ma_fields
-    transportadora = ma_fields
-    dacotacao = ma_fields
+class FretesSchema(SQLAlchemyAutoSchema):
+    """
+    Serializa e desserializa 
+    """
+    class Meta:
+        model = CotacaoFrete
+        include_relationships = True
+        load_instance = True
+        idfrete = auto_field()
+        idmarca = auto_field()
+        idproduto = auto_field()
+        cep = auto_field()
+        categoriafrete = auto_field()
+        valorFrete = auto_field()
+        prazo = auto_field()
+        transportadora = auto_field()
+        dacotacao = auto_field()
 
+  
 #Schema/Usuario - Cadastro login e senha para acesso aos endpoints
-class UsuariosSchema(Schema):
-    id_usuario = ma_fields.Integer()
-    nome = ma_fields.String()
-    email = ma_fields.String()
-    password_hash= ma_fields.String()
-    bitusuario = ma_fields.Boolean()
-    bitlogado = ma_fields.Boolean()
-    datalogado = ma_fields.DateTime()
-    datacadastro = ma_fields.DateTime()
-    bitativo = ma_fields.Boolean()
+class UsuariosSchema(SQLAlchemyAutoSchema):
+    """
+    Serializa e desserializa 
+    """
+    class Meta:
+        model = Produtos
+        include_relationships = True
+        load_instance = True
 
+        id_usuario = auto_field()
+        nome = auto_field()
+        password_hash= auto_field()
+        bitusuario = auto_field()
+        bitlogado = auto_field()
+        datalogado = auto_field()
+        datacadastro = auto_field()
+        bitativo = auto_field()
+  
 #Schema/Marcas
-class MarcasSchema(Schema):
-    idmarca = ma_fields
-    marca = ma_fields
-    bitativo = ma_fields
-    datacadastro = ma_fields
+class MarcasSchema(SQLAlchemyAutoSchema):
+    """
+    Serializa e desserializa 
+    """
+    class Meta:
+        model = MarcaProduto
+        include_relationships = True
+        load_instance = True
+
+        idmarca = auto_field()
+        marca = auto_field()
+        bitativo = auto_field()
+        datacadastro = auto_field()
+        bitativo = auto_field()
+
 
 #Schema/Log Alterações e Cotações
-class LogUsuariosSchema(Schema):
-    idlog = ma_fields.Integer()
-    idusuario = ma_fields.Integer()
-    referenciaproduto = ma_fields
-    dias  = ma_fields.Integer()
-    valor = ma_fields.Float()
-    tipo = ma_fields.String()
-    datalog = ma_fields.DateTime()
+class LogUsuariosSchema(SQLAlchemyAutoSchema):
+    """
+    Serializa e desserializa 
+    """
+    class Meta:
+        model = LogUsuario
+        include_relationships = True
+        load_instance = True
+        idlog = auto_field()
+        idusuario = auto_field()
+        idfrete = auto_field()
+        datalog = auto_field()
 
