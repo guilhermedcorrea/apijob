@@ -2,47 +2,46 @@ from flask import Blueprint, request, make_response, jsonify,current_app, Respon
 from functools import wraps
 from flask_restx import Resource, Api, fields
 
+from ..models.models import Produtos, LogUsuario, CotacaoFrete, Usuarios
+from ..models.serializer import ProdutosSchema, FretesSchema, UsuariosSchema 
 
 
 def retornafrete(f):
     @wraps(f)
-    def insert_Valores(*args, **kwds):
+    def insert_Valores(*args, **kwargs):
+
         print('Insere valores nas tabelas')
-        return f(*args, **kwds)
+        return f(*args, **kwargs)
     return insert_Valores
 
-
 @retornafrete
-def gera_log():
+def gera_log(*args, **kwargs):
+    """
+    função pega id usuario da sessao, id frete cadastrado na tabela "CotacaoFrete"
+    """
     """Recebe parametros de entrada"""
-    print('registra log acoes')
-
+    #log =   LogUsuario(idusuario = , idfrete = datalog =)
+    pass
 
 frete_bp = Blueprint("api",__name__)
 
-from ..models.serializer import ProdutosSchema, FretesSchema, MarcasSchema
-from ..models.models import Produtos, MarcaProduto, Usuarios, LogUsuario
-
-from ..extensions import db
-
-
 api = Api(current_app)
-
-produtos = [{"referenciasku":"aaaaa","id":12,"quantidade":22,"cep":"13013000"}
-    ,{"referenciasku":"bbbb","id":18,"quantidade":22,"cep":"13013000"}]
-
 
 api_model = api.model('Produtos',{'referenciasku':fields.String,
  'id':fields.Integer,'quantidade':fields.Float, 'cep':fields.String})
 
+
+from .calcula_frete import RetetornaCalculoFrete
+
+
 @api.route('/api/v1/fretes/all')
 class ExibeFretes(Resource):
-    @api.expect(api_model, envelope='Produtos')
+    #@api.expect(api_model, envelope='Produtos')
     def get(self):
-        if request.method=='GET':
-            return {"valor":produtos},201
-        return {"error":"naoencontrado"}, 404
-    
+        prods = ProdutosSchema(many=True)
+        produtos = Produtos.query.all()
+        return (prods.dump(produtos)), 200
+
 
 @api.route('/api/v1/fretes/add')
 class AdicionaFrete(Resource):
@@ -53,8 +52,7 @@ class AdicionaFrete(Resource):
     def post(self):
         if request.method == 'POST':
             valor = request.json
-            produtos.append(api.payload)
-          
+            #produtos.append(api.payload)
  
             return {"ok":valor},201
         return {"valor":"invalido"}, 404
