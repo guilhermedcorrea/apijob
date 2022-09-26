@@ -5,6 +5,14 @@ from flask_restx import Resource, Api, fields
 from ..models.models import Produtos, LogUsuario, CotacaoFrete, Usuarios
 from ..models.serializer import ProdutosSchema, FretesSchema, UsuariosSchema 
 
+def register_handlers(app):
+    if app.config.get('DEBUG') is True:
+        app.logger.debug('Skipping error handlers in Debug mode')
+        return
+
+
+
+
 
 def retornafrete(f):
     @wraps(f)
@@ -22,6 +30,24 @@ def gera_log(*args, **kwargs):
     """Recebe parametros de entrada"""
     #log =   LogUsuario(idusuario = , idfrete = datalog =)
     pass
+
+
+def register_handlers(current_app):
+    if current_app.config.get('DEBUG') is True:
+        current_app.logger.debug('Skipping error handlers in Debug mode')
+        return
+
+
+    @current_app.errorhandler(404)
+    def not_found_error(error):
+        return jsonify({"Error":"not found error"}), 404
+
+
+    @current_app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({"Error":"internal error"}), 500
+
+
 
 frete_bp = Blueprint("api",__name__)
 
@@ -59,3 +85,6 @@ class AdicionaFrete(Resource):
 
 
 class RetornaUnitario(Resource):pass
+
+
+register_handlers(current_app)
