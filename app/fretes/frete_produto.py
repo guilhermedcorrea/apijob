@@ -11,9 +11,6 @@ def register_handlers(app):
         return
 
 
-
-
-
 def retornafrete(f):
     @wraps(f)
     def insert_Valores(*args, **kwargs):
@@ -31,22 +28,32 @@ def gera_log(*args, **kwargs):
     #log =   LogUsuario(idusuario = , idfrete = datalog =)
     pass
 
-
-def register_handlers(current_app):
+#Handlers
+def register_handlers(app):
     if current_app.config.get('DEBUG') is True:
         current_app.logger.debug('Skipping error handlers in Debug mode')
         return
-
 
     @current_app.errorhandler(404)
     def not_found_error(error):
         return jsonify({"Error":"not found error"}), 404
 
-
     @current_app.errorhandler(500)
     def internal_error(error):
         return jsonify({"Error":"internal error"}), 500
 
+    @current_app.errorhandler(500)
+    def ModuleNotFoundError(*args, **kwargs):
+        return jsonify({"Error":"Server Error"}), 500
+
+    @current_app.errorhandler(404)
+    def page_not_found(*args, **kwargs):
+        return jsonify({"Error":"EndPoint NotFound"}), 404
+   
+    @current_app.errorhandler(405)
+    def method_not_allowed_page(*args, **kwargs):
+  
+        return jsonify({"Error":"Method not found"}), 40
 
 
 frete_bp = Blueprint("api",__name__)
@@ -58,7 +65,6 @@ api_model = api.model('Produtos',{'referenciasku':fields.String,
 
 
 from .calcula_frete import RetetornaCalculoFrete
-
 
 @api.route('/api/v1/fretes/all')
 class ExibeFretes(Resource):
