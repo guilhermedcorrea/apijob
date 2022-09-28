@@ -16,25 +16,11 @@ admin = Admin(current_app, name='KABUM', template_mode='bootstrap3')
 current_app.config['FLASK_ADMIN_FLUID_LAYOUT'] = True
 
 
+
 from ..extensions import db
-from ..models.models import Produtos
+from ..models.models import Produtos, MarcaProduto, CotacaoFrete, Usuarios
 
-'''
-class DefaultModelView(ModelView):
-    page_size = 20
 
-    column_display_pk = True
-    column_searchable_list = ['idproduto']
-    can_view_details = True
-
-    column_list = []
-
-    column_filters = []
-
-    can_create = True
-    can_edit = True
-    can_export = True
-'''
 
 class ProdutosView(ModelView):
 
@@ -56,8 +42,56 @@ class ProdutosView(ModelView):
     column_filters = ['skuproduto', 'idproduto', 'bitativo', 'peso']
 
     column_display_all_relations = True
-    #column_sortable_list = ('idproduto',(Produtos.idproduto))
 
 
 
+class MarcaProdutoView(ModelView):
+    can_set_page_size = True
+    page_size = 15
+    create_modal = True
+    column_sortable_list = ('idmarca',('MarcaProduto', MarcaProduto.idmarca))
+    column_display_pk = True
+    column_searchable_list = ['idmarca', 'marca', 'bitativo', 'datacadastro','bitativo']
+    column_list = ['idmarca', 'marca', 'bitativo', 'datacadastro','bitativo']
+
+    column_filters = ['idmarca','marca','bitativo']
+    can_create = True
+    can_edit = True
+    Can_delete = True
+    can_export = True
+    column_default_sort = 'idmarca'
+    column_details_list = ['idmarca', 'marca', 'bitativo', 'datacadastro','bitativo']
+    column_filters = ['idmarca', 'marca', 'bitativo', 'datacadastro','bitativo']
+
+    column_display_all_relations = True
+    
+
+class CotacaoFreteView(ModelView):
+    can_set_page_size = True
+    page_size = 15
+    create_modal = True
+    column_sortable_list = ('idfrete',('CotacaoFrete', CotacaoFrete.idfrete))
+    column_display_pk = True
+    column_searchable_list = ['idfrete', 'transportadora']
+    column_list = ['idfrete', 'transportadora', 'idmarca', 'idproduto','cep','categoriafrete',
+                   'valorFrete','prazo','transportadora','dacotacao']
+
+    column_filters = ['idmarca','idproduto','categoriafrete']
+    can_create = True
+    can_edit = True
+    Can_delete = True
+    can_export = True
+    column_default_sort = 'idfrete'
+    column_details_list = ['idfrete', 'transportadora', 'idmarca', 'idproduto','cep','categoriafrete',
+                   'valorFrete','prazo','transportadora','dacotacao']
+    column_filters = ['idfrete', 'transportadora', 'idmarca', 'idproduto','cep','categoriafrete',
+                   'valorFrete','prazo','transportadora','dacotacao']
+
+    column_display_all_relations = True
+    
+
+
+admin.add_view(CotacaoFreteView(CotacaoFrete, db.session))
 admin.add_view(ProdutosView(Produtos, db.session))
+
+admin.add_view(MarcaProdutoView(MarcaProduto, db.session))

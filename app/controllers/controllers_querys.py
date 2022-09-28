@@ -2,7 +2,7 @@ from datetime import datetime
 from functools import wraps
 from sqlalchemy import text
 import re
-from extensions import db
+from app.extensions import db
 
 
 #Recebe Parametros vindos da Rota '/api/v1/fretes/add' de cotação e dos Crawlers montados em cima do 'https://melhorenvio.com.br/' (Cotação do frete)

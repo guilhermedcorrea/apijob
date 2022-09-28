@@ -1,5 +1,7 @@
 from ..extensions import db
-
+from sqlalchemy import Column, ForeignKey, Integer, Table
+from sqlalchemy.orm import declarative_base, relationship
+from datetime import datetime
 
 class Usuarios(db.Model):
     """
@@ -15,6 +17,8 @@ class Usuarios(db.Model):
     datalogado = db.Column(db.DateTime, unique=False, nullable=True)
     datacadastro = db.Column(db.DateTime, unique=False, nullable=True)
     bitativo = db.Column(db.Boolean)
+    log = db.relationship('LogUsuario', backref='usuarios',lazy=True)
+    
     def __repr__(self):
         return  f'<Nome>"{self.id_usuario}"'
 
@@ -28,6 +32,9 @@ class MarcaProduto(db.Model):
     bitativo = db.Column(db.Boolean, nullable=True)
     datacadastro = db.Column(db.DateTime, unique=False, nullable=True)
     bitativo = db.Column(db.Boolean)
+    produtos = db.relationship('Produtos', backref='marcaproduto',lazy=True)
+    fretemarca = db.relationship('CotacaoFrete', backref='marcaproduto',lazy=True)
+    
 
     def __repr__(self):
         return  f'<Marca>"{self.marca}"'
@@ -42,7 +49,7 @@ class Produtos(db.Model):
     idproduto = db.Column(db.Integer, primary_key = True)
     skuproduto = db.Column(db.String(300),unique=False , nullable=True)
     nomeproduto =db.Column(db.String(1000),unique=False , nullable=True)
-    idmarca = db.Column(db.Integer,db.ForeignKey('marcaproduto.idmarca'))
+    idmarca = db.Column(db.Integer, db.ForeignKey('marcaproduto.idmarca'))
     urlpaginaproduto = db.Column(db.String(2000),unique=False , nullable=True)
     peso = db.Column(db.Float,unique=False , nullable=True)
     altura = db.Column(db.Float,unique=False , nullable=True)
@@ -50,6 +57,7 @@ class Produtos(db.Model):
     comprimento = db.Column(db.Float,unique=False , nullable=True)
     bitativo = db.Column(db.Boolean,unique=False ,nullable=True)
     dataalterado = db.Column(db.DateTime, unique=False, nullable=True)
+    freteproduto = db.relationship('CotacaoFrete', backref='produto',lazy=True)
    
     def __repr__(self):
         return  f'<SKU>"{self.idproduto}"'
@@ -70,7 +78,8 @@ class CotacaoFrete(db.Model):
     prazo = db.Column(db.Integer)
     transportadora = db.Column(db.String(200))
     dacotacao = db.Column(db.DateTime, unique=False, nullable=True)
-    #log = db.relationship('idfrete', backref='idfrete')
+    log = db.relationship('LogUsuario', backref='idfrete',lazy=True)
+
 
 
     def __repr__(self):
@@ -84,7 +93,11 @@ class LogUsuario(db.Model):
     __tablename__ = 'logusuario'
     idlog = db.Column(db.Integer, primary_key = True)
     idusuario = db.Column(db.Integer,db.ForeignKey('usuarios.id_usuario'))
-    idfrete = db.Column(db.Integer, db.ForeignKey('cotacaofrete.idfrete'))
+    freteid = db.Column(db.Integer, db.ForeignKey('cotacaofrete.idfrete'))
+    prazo = db.Column(db.Integer)
+    valor = db.Column(db.Float)
+    transportadora = db.Column(db.String(100))
+    idproduto = db.Column(db.Integer)
     datalog = db.Column(db.DateTime, unique=False)
 
     def __repr__(self):

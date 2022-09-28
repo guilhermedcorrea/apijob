@@ -2,8 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask import abort, jsonify
-from config import uri_database, secret_key
 
+#from config import uri_database, secret_key
+import os
 
 #Handlers
 def register_handlers(app):
@@ -33,27 +34,35 @@ def register_handlers(app):
         return jsonify({"Error":"Method not found"}), 405
         
 
-#Factory
-def create_app():
-    """Declare APP e registra blueprints"""
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/Kabum'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config["JWT_SECRET_KEY"] = secret_key  #Token JWT
 
+def create_app():
+   
+    """Declare APP e registra blueprints"""
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] =\
+            'sqlite:///' + os.path.join(basedir, 'kabumdbapi.db')
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    #app.config["JWT_SECRET_KEY"] = secret_key  #Token JWT
+    from .models.models import Produtos, Usuarios,MarcaProduto, CotacaoFrete, LogUsuario
     #instancia APP/SqlAlchemy/Marshmallow
     from .extensions import db, ma, jwt, migrate
-    db.init_app(app)
+    
     ma = ma.init_app(app)
     jwt.init_app(app)
-    migrate.init_app(app, db)
-   
+    
     
     with app.app_context():
         """Não mover esses imports para cima pois podem causar importação circular"""
         from .fretes.frete_produto import frete_bp
         from .admin.Admin import admin_bp
+        
+        db.init_app(app)
+        migrate.init_app(app, db)
         register_handlers(app)
+        
         app.register_blueprint(admin_bp)
         app.register_blueprint(frete_bp)
         

@@ -7,6 +7,9 @@ import os
 
 #String Conexao banco de dados
 load_dotenv()
-uri_database = driver = os.getenv('stringcon')
 
-secret_key = driver = os.getenv('SECRET_KEY')
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+URI_DATABASE = 'sqlite:///' + os.path.join(basedir, 'kabumdbapi.db')
+print(URI_DATABASE)
